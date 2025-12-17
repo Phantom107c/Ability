@@ -1,0 +1,66 @@
+5. Categorical data clustering
+(a) One- hot encoding for categorical data clustering.
+
+
+import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.cluster import KMeans
+data = pd.DataFrame({
+ "weather": ["sunny", "cloudy", "rainy", "sunny", "rainy", "cloudy", "sunny"]
+})
+print("Original Data:")
+print(data)
+encoder = OneHotEncoder(sparse_output=False)
+onehot = encoder.fit_transform(data[["weather"]])
+print("\nOne-Hot Encoded Data:")
+print(onehot)
+print("\nCategories:", encoder.categories_)
+kmeans = KMeans(n_clusters=2, random_state=0)
+labels = kmeans.fit_predict(onehot)
+print("\nCluster Labels:")
+print(labels)
+data["cluster"] = labels
+print("\nFinal Data with Cluster Assignments:")
+print(data)
+
+
+(b) Dummy encoding for categorical data clustering.
+
+import pandas as pd
+from sklearn.cluster import KMeans
+data = pd.DataFrame({
+ "weather": ["sunny", "cloudy", "rainy", "sunny", "rainy", "cloudy", "sunny"]
+})
+print("Original Data:")
+print(data)
+dummy_encoded = pd.get_dummies(data, columns=["weather"], drop_first=True)
+print("\nDummy Encoded Data (drop_first=True):")
+print(dummy_encoded)
+kmeans = KMeans(n_clusters=2, random_state=0)
+labels = kmeans.fit_predict(dummy_encoded)
+print("\nCluster Labels:")
+print(labels)
+data["cluster"] = labels
+print("\nFinal Data with Cluster Assignments:")
+print(data)
+
+(c) Effective encoding for categorical data clustering.
+
+import pandas as pd
+from sklearn.cluster import KMeans
+import numpy as np
+data = pd.DataFrame({
+ "weather": ["sunny", "cloudy", "rainy", "sunny", "rainy", "sunny", "cloudy"]
+})
+print("Original Data:")
+print(data)
+freq_map = data["weather"].value_counts(normalize=True).to_dict()
+data["weather_freq"] = data["weather"].map(freq_map)
+print("\nFrequency Encoded Data:")
+print(data)
+kmeans = KMeans(n_clusters=2, random_state=0)
+labels = kmeans.fit_predict(data[["weather_freq"]])
+data["cluster"] = labels
+print("\nFinal Data With Cluster Assignments:")
+print(data)
+
